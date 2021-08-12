@@ -39,14 +39,17 @@ public class CWE89_SQL_Injection__PropertiesFile_executeUpdate_31 extends Abstra
         String dataCopy;
         {
             String data;
+            PreparedStatement sqlStatement = null;
+            Connection dbConnection = null;
 
             data = "SAFE"; /* Initialize data */
+            String sql;
 
             /* retrieve the property */
             {
                 Properties properties = new Properties();
                 FileInputStream streamFileInput = null;
-                String sql;
+
                 try
                 {
                     streamFileInput = new FileInputStream("../common/config.properties");
@@ -55,18 +58,9 @@ public class CWE89_SQL_Injection__PropertiesFile_executeUpdate_31 extends Abstra
                     /* POTENTIAL FLAW: Read data from a .properties file */
                     //data =  req.getParameter("Param");
                     data =  req.getParameter("Param");
-
-                    sql = "insert into users (status) values ('updated') where name='" + "?" + "'";
-                    sqlStatement = dbConnection
-                            .prepareStatement(sql);
-                    sqlStatement.setParm(1,data);
                 }
                 catch (IOException exceptIO)
                 {
-                    IO.logger.log(Level.WARNING, "Error with stream reading", exceptIO);
-                      sql = "insert into users (status) values ('updated') where name='" + data + "'";
-                    sqlStatement = dbConnection
-                            .prepareStatement(sql);
                 }
                 finally
                 {
@@ -100,7 +94,7 @@ public class CWE89_SQL_Injection__PropertiesFile_executeUpdate_31 extends Abstra
 
                 /* POTENTIAL FLAW: data concatenated into SQL statement used in executeUpdate(), which could result in SQL Injection */
 
-                int rowCount = sqlStatement.executeUpdate(sql);
+                int rowCount = sqlStatement.executeUpdate(data);
 
                 IO.writeLine("Updated " + rowCount + " rows successfully.");
             }
